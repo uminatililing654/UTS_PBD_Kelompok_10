@@ -1,63 +1,258 @@
-# UTS PBD Kelompok 10
- Sistem Rekap Nilai Praktikum Mahasiswa
+# 🎓 Sistem Otomatisasi Rekapitulasi Nilai Praktikum Mahasiswa
 
-Projek ini merupakan tugas Ujian Tengah Semester (UTS) untuk mata kuliah **Pemrograman Basis Data**. Sistem ini dirancang menggunakan DBMS MySQL (melalui XAMPP / phpMyAdmin) untuk membantu dosen dalam mengelola, mengalkulasi, dan mendokumentasikan rekapitulasi nilai praktikum mahasiswa secara otomatis dan relasional.
+Projek ini merupakan implementasi Pemrograman Prosedural pada DBMS MySQL menggunakan **Stored Procedure**, **Explicit Cursor**, **Implicit Cursor**, dan **Control Flow Bersyarat** untuk melakukan rekapitulasi data nilai mahasiswa secara otomatis, presisi, dan *real-time*.
 
- # Daftar Anggota Kelompok & Pembagian Tugas
-Sesuai dengan ketentuan pembagian tugas kelompok 5 orang, berikut adalah tanggung jawab masing-masing anggota:
+Projek ini disusun untuk memenuhi tugas **Projek UTS Pemrograman Basis Data** - Kelompok 10, Program Studi Informatika, Fakultas Komputer, Universitas Mega Buana Palopo.
 
-| Anggota | Nama Mahasiswa | NIM | Tanggung Jawab / Kontribusi Kode |
+---
 
-Anggota 1 Lisa Kelly(IK2411010)  Membuat database, struktur 6 tabel, mendefinisikan relasi (`Primary Key` & `Foreign Key`), serta menyusun data awal. 
+## 👥 Anggota Kelompok & Pembagian Tugas
 
-Anggota 2 Lilis(IK2411012) Merancang arsitektur penyimpanan dan perhitungan `nilai_akhir` menggunakan variabel lokal di dalam *Stored Procedure.
+| Nama Anggota | NIM | Pembagian Tugas / Tanggung Jawab Utama |
+|---|---|---|
+| **Lisa Kelly** | *[Isi NIM]* | Penanggung Jawab Database, Pembuat Skema Tabel, & Penyedia Data Awal (Min. 20 Data). |
+| **Lilis** | *[Isi NIM]* | **Poin 3**: Logika Perhitungan Nilai Akhir & Implementasi Manajemen Variabel Lokal. |
+| **Hasriani** | *[Isi NIM]* | **Poin 4**: Pembuat Logika Percabangan Multi-Kondisi (`CASE` & `IF`) Grade, Bobot, & Status Lulus. |
+| **Uminati** | *[Isi NIM]* | **Poin 5, 6, 7**: Implementasi Struktur Perulangan (`LOOP`), *Explicit Cursor*, & *Implicit Cursor* (`ROW_COUNT()`). |
+| **Nuraisya** | *[Isi NIM]* | **Poin 8**: Integrasi Fitur Spesifik, Pembuat *Stored Procedure* Berparameter, & Pengujian Sistem. |
 
-Anggota 3 Hasriani(IK24110) Menyusun logika kontrol percabangan (`CASE WHEN` & `IF-ELSE`) untuk penentuan grade, bobot, status kelulusan, serta struktur perulangan (`LOOP`).
+---
 
-Anggota 4 Uminati(IK2411011) Membuat kontrol aliran data menggunakan `Explicit Cursor`, menangani pembatasan parameter cursor, serta mengimplementasikan `Implicit Cursor`. 
+## 🏛️ Arsitektur dan Skema Database
 
-Anggota 5 Nuraisya Masdin(IK2411015) Menyusun seluruh file dokumentasi laporan PDF, mengelola berkas *repository* GitHub (README.md), serta melakukan pengujian program.
+Sistem ini berjalan di atas dua tabel utama yang saling berelasi secara logis pada *logic-layer* di dalam Stored Procedure:
 
-📝 Deskripsi Sistem
-Sistem database ini menangani otomatisasi pengolahan nilai praktikum mahasiswa. Nilai tugas (30%), kuis (30%), dan UTS (40%) yang diinput secara mentah akan dikalkulasi secara otomatis oleh sistem menjadi **Nilai Akhir**. 
-Berdasarkan nilai akhir tersebut, sistem akan menentukan **Grade** (A sampai E), **Bobot Nilai**, serta **Status Kelulusan** (LULUS jika minimal Grade C). Setiap kali proses rekap dijalankan, riwayat proses dan *timestamp* waktu eksekusi akan langsung dicatat ke dalam tabel log audit (`log_rekap_nilai`).
+### 1. Tabel `nilai_praktikum` (Master Transaksi)
+Menyimpan data mentah komponen nilai praktikum mahasiswa beserta hasil rekapitulasi akhir.
+* `id_nilai` (INT, Primary Key, Auto Increment)
+* `nim` (VARCHAR(20))
+* `kode_mk` (VARCHAR(10))
+* `nilai_tugas` (DECIMAL(5,2))
+* `nilai_kuis` (DECIMAL(5,2))
+* `nilai_uts` (DECIMAL(5,2))
+* `nilai_akhir` (DECIMAL(5,2), Nullable)
+* `grade` (VARCHAR(2), Nullable)
+* `bobot` (DECIMAL(3,2), Nullable)
+* `status_lulus` (VARCHAR(15), Nullable)
 
- 📊 Struktur Tabel
-Sistem ini menggunakan 6 tabel utama yang saling berelasi:
-1. `mahasiswa`: Data identitas mahasiswa (`nim` sebagai Primary Key).
-2. `dosen`: Data dosen pengampu mata kuliah (`kode_dosen` sebagai Primary Key).
-3. `mata_kuliah`: Data mata kuliah (`kode_mk` sebagai Primary Key, `kode_dosen` sebagai Foreign Key).
-4. `grade_nilai`: Standar konversi acuan nilai (`grade` sebagai Primary Key).
-5. `nilai_praktikum`: Penyimpanan komponen nilai praktikum (`id_nilai` sebagai Primary Key, memiliki relasi Foreign Key ke tabel mahasiswa, mata_kuliah, dan grade_nilai).
-6. `log_rekap_nilai`: Pencatatan riwayat transaksi aktivitas rekap nilai (`id_log` sebagai Primary Key).
+### 2. Tabel `log_rekap_nilai` (Audit Trail Log)
+Menyimpan riwayat dan rekam jejak digital dari setiap proses kalkulasi yang sukses dilakukan oleh sistem.
+* `id_log` (INT, Primary Key, Auto Increment)
+* `nim` (VARCHAR(20))
+* `kode_mk` (VARCHAR(10))
+* `nilai_akhir` (DECIMAL(5,2))
+* `grade` (VARCHAR(2))
+* `bobot` (DECIMAL(3,2))
+* `status_lulus` (VARCHAR(15))
+* `keterangan` (VARCHAR(255))
+* `waktu_proses` (DATETIME)
 
- 🛠️ Daftar Stored Procedure
-rekap_semua_nilai()
-    * *Fungsi*: Memproses seluruh data nilai mahasiswa secara massal menggunakan gabungan *Explicit Cursor*, perulangan, dan diakhiri penayangan jumlah baris terubah menggunakan *Implicit Cursor* (`ROW_COUNT()`).
-* **`rekap_nilai_per_mk(IN p_kode_mk VARCHAR(10))`**
-    * *Fungsi*: Memproses rekapitulasi nilai secara spesifik dan dinamis berdasarkan filter parameter kode mata kuliah yang dimasukkan oleh dosen.
+---
 
- Cara Menjalankan Program
-1.  Buka **XAMPP Control Panel** dan aktifkan modul **Apache** serta **MySQL**.
-2.  Buka browser dan masuk ke **phpMyAdmin** (`http://localhost/phpmyadmin/`).
-3.  Buat database baru bernama `uts_pbd_kelompok_[NomorKelompok]` (Contoh: `uts_pbd_kelompok_03`).
-4.  Masuk ke database tersebut, lalu buka tab **SQL**.
-5.  Salin dan jalankan isi file `database.sql` untuk membentuk struktur tabel dan relasinya.
-6.  Salin dan jalankan isi file `data_awal.sql` untuk memasukkan seluruh data master awal.
-7.  Salin dan jalankan isi file `procedure_rekap_nilai.sql` untuk mendaftarkan kedua *Stored Procedure* ke dalam sistem database.
-8.  Buka file `query_pengujian.sql` dan jalankan perintah `CALL` untuk menguji jalannya program rekap nilai.
+## 🛠️ Fitur dan Komponen Utama Sistem
 
- 📸 Screenshot Hasil Program
-*(Bagian ini wajib Anda isi dengan menempelkan link gambar atau file screenshot hasil eksekusi program phpMyAdmin kelompok Anda)*
+1. **Server-Side Processing**: Perhitungan dilakukan langsung di dalam mesin database untuk mengurangi beban latensi transfer data aplikasi.
+2. **Precision Decimal Calculation**: Menggunakan tipe data `DECIMAL` untuk menjaga akurasi pecahan nilai dan menghindari pembulatan otomatis yang keliru.
+3. **Automated Grade & Status Mapping**: Mengklasifikasikan nilai akhir ke dalam 10 tingkatan standar grade akademik (A hingga E) beserta status kelulusan (`LULUS` / `TIDAK LULUS`) menggunakan kondisi bersyarat `CASE WHEN`.
+4. **Row-by-Row Cursor Processing**: Memanfaatkan *Explicit Cursor* berkombinasi dengan `CONTINUE HANDLER FOR NOT FOUND` untuk menjelajahi data secara aman sekuensial.
+5. **Data Audit Logging**: Mengintegrasikan sistem pelaporan otomatis (*audit trail*) ke tabel log seketika setelah data diperbarui.
+6. **Dynamic Filtering**: Mendukung kalkulasi fleksibel per mata kuliah tertentu melalui parameter input prosedur.
 
-### 1. Data Awal Sebelum Diproses
-*(Tempel screenshot kueri SELECT * FROM nilai_praktikum; saat kolom nilai_akhir masih NULL)*
+---
 
-### 2. Hasil Eksekusi Stored Procedure (Output Implicit Cursor)
-*(Tempel screenshot baris angka hasil CALL rekap_semua_nilai();)*
+## 🚀 Panduan Instalasi dan Penggunaan
 
-### 3. Tabel Nilai Praktikum Setelah Diproses Berhasil
-*(Tempel screenshot tabel nilai_praktikum yang sudah terisi otomatis kolom grade dan kelulusannya)*
+### 1. Import Struktur Tabel dan Data Mentah
+Pastikan Anda sudah membuat database bernama `uts_pbd_kelompok_10` dan meng-import tabel beserta minimal 20 data mentah mahasiswa (pastikan kolom `nilai_akhir`, `grade`, `bobot`, dan `status_lulus` dalam kondisi kosong/NULL).
 
-### 4. Isi Tabel Log Rekap Nilai (Audit Trail)
-*(Tempel screenshot data riwayat dari tabel log_rekap_nilai)*
+### 2. Skrip SQL Kode Utama (Stored Procedure)
+Salin dan jalankan kueri berikut di tab SQL phpMyAdmin Anda untuk mendaftarkan kedua program prosedur ke dalam database:
+
+```sql
+-- =========================================================================
+-- PROSEDUR 1: REKAPITULASI GLOBAL (SEMUA MAHASISWA)
+-- =========================================================================
+DROP PROCEDURE IF EXISTS rekap_semua_nilai;
+DELIMITER $$
+
+CREATE PROCEDURE rekap_semua_nilai()
+BEGIN
+    -- 1. DEKLARASI VARIABEL LOKAL (Tugas Lilis)
+    DECLARE v_id_nilai INT;
+    DECLARE v_nim VARCHAR(20);
+    DECLARE v_kode_mk VARCHAR(10);
+    DECLARE v_tugas DECIMAL(5,2);
+    DECLARE v_kuis DECIMAL(5,2);
+    DECLARE v_uts DECIMAL(5,2);
+    
+    DECLARE v_nilai_akhir DECIMAL(5,2);
+    DECLARE v_grade VARCHAR(2);
+    DECLARE v_bobot DECIMAL(3,2);
+    DECLARE v_status VARCHAR(15);
+    
+    DECLARE done INT DEFAULT FALSE;
+    
+    -- 2. DEKLARASI EXPLICIT CURSOR & HANDLER (Tugas Uminati)
+    DECLARE cursor_total CURSOR FOR 
+        SELECT id_nilai, nim, kode_mk, nilai_tugas, nilai_kuis, nilai_uts FROM nilai_praktikum;
+        
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    OPEN cursor_total;
+    
+    -- 3. PERULANGAN DATA (Tugas Uminati)
+    rekap_loop: LOOP
+        
+        FETCH cursor_total INTO v_id_nilai, v_nim, v_kode_mk, v_tugas, v_kuis, v_uts;
+        
+        IF done THEN
+            LEAVE rekap_loop;
+        END IF;
+        
+        -- 4. PERHITUNGAN RUMUS NILAI AKHIR (Tugas Lilis)
+        SET v_nilai_akhir = (v_tugas * 0.30) + (v_kuis * 0.30) + (v_uts * 0.40);
+        
+        -- 5. PERCABANGAN GRADE, BOBOT & STATUS (Tugas Hasriani)
+        CASE 
+            WHEN v_nilai_akhir BETWEEN 93.00 AND 100.00 THEN SET v_grade = 'A',  v_bobot = 4.00;
+            WHEN v_nilai_akhir BETWEEN 85.00 AND 92.99  THEN SET v_grade = 'A-', v_bobot = 3.75;
+            WHEN v_nilai_akhir BETWEEN 81.00 AND 84.99  THEN SET v_grade = 'B+', v_bobot = 3.50;
+            WHEN v_nilai_akhir BETWEEN 75.00 AND 80.99  THEN SET v_grade = 'B',  v_bobot = 3.25;
+            WHEN v_nilai_akhir BETWEEN 71.00 AND 74.99  THEN SET v_grade = 'B-', v_bobot = 3.00;
+            WHEN v_nilai_akhir BETWEEN 66.00 AND 70.99  THEN SET v_grade = 'C+', v_bobot = 2.75;
+            WHEN v_nilai_akhir BETWEEN 61.00 AND 65.99  THEN SET v_grade = 'C',  v_bobot = 2.50;
+            WHEN v_nilai_akhir BETWEEN 56.00 AND 60.99  THEN SET v_grade = 'C-', v_bobot = 2.00;
+            WHEN v_nilai_akhir BETWEEN 40.00 AND 55.99  THEN SET v_grade = 'D',  v_bobot = 1.00;
+            ELSE SET v_grade = 'E', v_bobot = 0.00;
+        END CASE;
+        
+        IF v_grade IN ('A', 'A-', 'B+', 'B', 'B-', 'C+', 'C') THEN
+            SET v_status = 'LULUS';
+        ELSE
+            SET v_status = 'TIDAK LULUS';
+        END IF;
+        
+        -- 6. UPDATE TABEL UTAMA & LOGGING DATA (Tugas Uminati)
+        UPDATE nilai_praktikum 
+        SET nilai_akhir = v_nilai_akhir, grade = v_grade, bobot = v_bobot, status_lulus = v_status
+        WHERE id_nilai = v_id_nilai;
+        
+        INSERT INTO log_rekap_nilai (nim, kode_mk, nilai_akhir, grade, bobot, status_lulus, keterangan, waktu_proses)
+        VALUES (v_nim, v_kode_mk, v_nilai_akhir, v_grade, v_bobot, v_status, 'Proses Rekapitulasi Otomatis Sukses', NOW());
+        
+    END LOOP rekap_loop;
+    
+    CLOSE cursor_total;
+    
+    -- 7. IMPLICIT CURSOR ROW_COUNT (Tugas Uminati)
+    SELECT ROW_COUNT() AS jumlah_data_diproses;
+
+END$$
+
+-- =========================================================================
+-- PROSEDUR 2: REKAPITULASI SELEKTIF BERPARAMETER (Tugas Nuraisya)
+-- =========================================================================
+DROP PROCEDURE IF EXISTS rekap_nilai_per_mk;
+CREATE PROCEDURE rekap_nilai_per_mk(IN p_kode_mk VARCHAR(10))
+BEGIN
+    DECLARE v_id_nilai INT;
+    DECLARE v_nim VARCHAR(20);
+    DECLARE v_kode_mk VARCHAR(10);
+    DECLARE v_tugas DECIMAL(5,2);
+    DECLARE v_kuis DECIMAL(5,2);
+    DECLARE v_uts DECIMAL(5,2);
+    
+    DECLARE v_nilai_akhir DECIMAL(5,2);
+    DECLARE v_grade VARCHAR(2);
+    DECLARE v_bobot DECIMAL(3,2);
+    DECLARE v_status VARCHAR(15);
+    
+    DECLARE done INT DEFAULT FALSE;
+    
+    DECLARE cursor_per_mk CURSOR FOR 
+        SELECT id_nilai, nim, kode_mk, nilai_tugas, nilai_kuis, nilai_uts 
+        FROM nilai_praktikum
+        WHERE kode_mk = p_kode_mk;
+        
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    OPEN cursor_per_mk;
+    
+    rekap_loop: LOOP
+        
+        FETCH cursor_per_mk INTO v_id_nilai, v_nim, v_kode_mk, v_tugas, v_kuis, v_uts;
+        
+        IF done THEN
+            LEAVE rekap_loop;
+        END IF;
+        
+        SET v_nilai_akhir = (v_tugas * 0.30) + (v_kuis * 0.30) + (v_uts * 0.40);
+        
+        CASE 
+            WHEN v_nilai_akhir BETWEEN 93.00 AND 100.00 THEN SET v_grade = 'A',  v_bobot = 4.00;
+            WHEN v_nilai_akhir BETWEEN 85.00 AND 92.99  THEN SET v_grade = 'A-', v_bobot = 3.75;
+            WHEN v_nilai_akhir BETWEEN 81.00 AND 84.99  THEN SET v_grade = 'B+', v_bobot = 3.50;
+            WHEN v_nilai_akhir BETWEEN 75.00 AND 80.99  THEN SET v_grade = 'B',  v_bobot = 3.25;
+            WHEN v_nilai_akhir BETWEEN 71.00 AND 74.99  THEN SET v_grade = 'B-', v_bobot = 3.00;
+            WHEN v_nilai_akhir BETWEEN 66.00 AND 70.99  THEN SET v_grade = 'C+', v_bobot = 2.75;
+            WHEN v_nilai_akhir BETWEEN 61.00 AND 65.99  THEN SET v_grade = 'C',  v_bobot = 2.50;
+            WHEN v_nilai_akhir BETWEEN 56.00 AND 60.99  THEN SET v_grade = 'C-', v_bobot = 2.00;
+            WHEN v_nilai_akhir BETWEEN 40.00 AND 55.99  THEN SET v_grade = 'D',  v_bobot = 1.00;
+            ELSE SET v_grade = 'E', v_bobot = 0.00;
+        END CASE;
+        
+        IF v_grade IN ('A', 'A-', 'B+', 'B', 'B-', 'C+', 'C') THEN
+            SET v_status = 'LULUS';
+        ELSE
+            SET v_status = 'TIDAK LULUS';
+        END IF;
+        
+        UPDATE nilai_praktikum 
+        SET nilai_akhir = v_nilai_akhir, grade = v_grade, bobot = v_bobot, status_lulus = v_status
+        WHERE id_nilai = v_id_nilai;
+        
+        INSERT INTO log_rekap_nilai (nim, kode_mk, nilai_akhir, grade, bobot, status_lulus, keterangan, waktu_proses)
+        VALUES (v_nim, v_kode_mk, v_nilai_akhir, v_grade, v_bobot, v_status, CONCAT('Rekap Khusus Mata Kuliah: ', p_kode_mk), NOW());
+        
+    END LOOP rekap_loop;
+    
+    CLOSE cursor_per_mk;
+    
+    SELECT ROW_COUNT() AS jumlah_data_mk_diproses;
+
+END$$
+
+DELIMITER ;
+
+
+3. Perintah Eksekusi / Uji Coba Pengujian
+Buka tab SQL baru yang kosong di phpMyAdmin, jalankan instruksi di bawah ini untuk mengetes performa sistem:
+
+Skenario A: Memproses Semua Data Mahasiswa Sekaligus
+
+SQL
+CALL rekap_semua_nilai();
+Skenario B: Memproses Data Secara Selektif Menggunakan Parameter Filter MK
+
+SQL
+CALL rekap_nilai_per_mk('MK001');
+CALL rekap_nilai_per_mk('MK002');
+Skenario C: Memverifikasi Hasil Pembaruan dan Riwayat Log Audit
+
+SQL
+SELECT * FROM nilai_praktikum;
+SELECT * FROM log_rekap_nilai;
+📝 Ringkasan Analisis Logika Kode
+Variabel Lokal (DECLARE): Digunakan untuk menyimpan sementara data komponen nilai aktif dari tabel fisik ke memori operasional RAM sebelum diproses kalkulasi rumus matematika.
+
+Percabangan (CASE WHEN): Memvalidasi kondisi berlapis untuk memetakan rentang nilai akhir ke dalam representasi string nilai huruf beserta angka bobot SKS secara inklusif.
+
+Perulangan (LOOP): Memutar pembacaan baris tabel baris demi baris, dikunci dengan statemen LEAVE untuk memutus perputaran kursor saat kondisi handler NOT FOUND terpenuhi demi mencegah malapetaka infinite loop.
+
+Explicit Cursor: Komponen inti pembuat penunjuk (pointer result-set) data kueri internal tabel agar sekumpulan baris dapat dieksekusi secara berurutan.
+
+Implicit Cursor (ROW_COUNT()): Mengambil data konfirmasi internal mesin MySQL secara otomatis untuk menampilkan berapa total baris data yang sukses termanipulasi di kueri UPDATE terakhir.
+
+Cursor Parameter: Menggunakan argumentasi masukan prosedur (IN) untuk menyaring data kursor langsung pada klausa WHERE, sangat menghemat penggunaan alokasi ruang memori database server.
+
+
