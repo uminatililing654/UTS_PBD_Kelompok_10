@@ -7,11 +7,17 @@ Projek ini merupakan tugas Ujian Tengah Semester (UTS) untuk mata kuliah **Pemro
 Sesuai dengan ketentuan pembagian tugas kelompok 5 orang, berikut adalah tanggung jawab masing-masing anggota:
 
 | Anggota | Nama Mahasiswa | NIM | Tanggung Jawab / Kontribusi Kode |
+
 Anggota 1 Lisa Kelly(IK2411010)  Membuat database, struktur 6 tabel, mendefinisikan relasi (`Primary Key` & `Foreign Key`), serta menyusun data awal. 
+
 Anggota 2 Lilis(IK2411012) Merancang arsitektur penyimpanan dan perhitungan `nilai_akhir` menggunakan variabel lokal di dalam *Stored Procedure.
+
 Anggota 3 Hasriani(IK24110) Menyusun logika kontrol percabangan (`CASE WHEN` & `IF-ELSE`) untuk penentuan grade, bobot, status kelulusan, serta struktur perulangan (`LOOP`).
+
 Anggota 4 Uminati(IK2411011) Membuat kontrol aliran data menggunakan `Explicit Cursor`, menangani pembatasan parameter cursor, serta mengimplementasikan `Implicit Cursor`. 
+
 Anggota 5 Nuraisya Masdin(IK2411015) Menyusun seluruh file dokumentasi laporan PDF, mengelola berkas *repository* GitHub (README.md), serta melakukan pengujian program.
+
 📝 Deskripsi Sistem
 Sistem database ini menangani otomatisasi pengolahan nilai praktikum mahasiswa. Nilai tugas (30%), kuis (30%), dan UTS (40%) yang diinput secara mentah akan dikalkulasi secara otomatis oleh sistem menjadi **Nilai Akhir**. 
 Berdasarkan nilai akhir tersebut, sistem akan menentukan **Grade** (A sampai E), **Bobot Nilai**, serta **Status Kelulusan** (LULUS jika minimal Grade C). Setiap kali proses rekap dijalankan, riwayat proses dan *timestamp* waktu eksekusi akan langsung dicatat ke dalam tabel log audit (`log_rekap_nilai`).
