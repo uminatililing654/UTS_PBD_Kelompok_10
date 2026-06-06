@@ -48,13 +48,3 @@ Jalankan file SQL di dalam phpMyAdmin secara berurutan sesuai dengan penomoran f
 3. Impor file `procedure_rekap_nilai.sql` untuk menanamkan kedua *Stored Procedure* ke dalam MySQL server.
 4. Jalankan perintah di dalam file `query_pengujian.sql` pada menu SQL phpMyAdmin untuk melihat hasil eksekusi program.
 
- 8. Screenshot Hasil Program
-*(Silakan unggah gambar screenshot kalian ke repositori GitHub ini, lalu sesuaikan jalur pemanggilan gambarnya di bawah ini)*
-
- Hasil Eksekusi Procedure Utama (Massal)
-Menampilkan keberhasilan pemrosesan seluruh data (20 baris data mahasiswa):
-![Hasil Rekap Massal](screenshot_rekap_massal.jpg)
-
-### Hasil Eksekusi Procedure Spesifik (Parameter MK001)
-Menampilkan keberhasilan penyaringan data berdasarkan kode mata kuliah (12 baris data mahasiswa):
-![Hasil Rekap Parameter](screenshot_rekap_parameter.jpg)
