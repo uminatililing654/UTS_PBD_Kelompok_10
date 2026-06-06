@@ -25,7 +25,7 @@ INSERT INTO mahasiswa (nim, nama, kelas, angkatan) VALUES
 ('202401003', 'Lilis', 'Informatika A', 2024),
 ('202401004', 'Hasriani', 'Informatika A', 2024),
 ('202401005', 'Uminati', 'Informatika B', 2024),
-('202401006', 'Nuraisya Masdin', 'Informatika B', 2024),
+('202401006', 'Nur aisyah Masdin', 'Informatika B', 2024),
 ('202401007', 'Andi Ahmad', 'Informatika A', 2024),
 ('202401008', 'Budi Santoso', 'Informatika B', 2024),
 ('202401009', 'Citra Lestari', 'Informatika A', 2024),
