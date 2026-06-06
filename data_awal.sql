@@ -1,5 +1,3 @@
-
-
 INSERT INTO grade_nilai (grade, bobot, nilai_bawah, nilai_atas) VALUES
 ('A', 4.00, 93.00, 100.00),
 ('A-', 3.75, 85.00, 92.99),
