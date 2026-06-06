@@ -6,11 +6,11 @@ Sistem Otomatisasi Rekapitulasi Nilai Praktikum Berbasis Stored Procedure dan Ex
  2. Nama Kelompok & Daftar Anggota
 *Kelompok 10 - Kelas Informatika*
 
-* Lisa kelly (Anggota 1) - NIM: [Isi NIM]
-* Lilis (Anggota 2) - NIM: [Isi NIM]
-* Hasriani (Anggota 3) - NIM: [Isi NIM]
-* Uminati (Anggota 4) - NIM: [Isi NIM]
-* Nuraisya Masdin (Anggota 5) - NIM: [Isi NIM]
+* Lisa kelly (Anggota 1) - NIM:IK2411010
+* Lilis (Anggota 2) - NIM:IK2411012
+* Hasriani (Anggota 3) - NIM:IK2411040
+* Uminati (Anggota 4) - NIM:IK2411011
+* Nur aisyah Masdin (Anggota 5) - NIM:IK2411014
 
  3. Deskripsi Sistem
 Sistem ini dirancang untuk mengotomatisasi proses kalkulasi nilai akhir, penentuan grade, pemberian bobot, hingga pembaruan status kelulusan mahasiswa pada mata kuliah praktikum. Sistem bekerja secara transaksional menggunakan konsep pemrograman basis data lanjutan di MySQL, yaitu *Stored Procedure*, *Explicit Cursor*, perulangan (*Loop*), dan kondisional (*Case/If*). Setiap kali rekapitulasi dilakukan, sistem juga secara otomatis mencatat riwayat eksekusi ke dalam tabel log sebagai fungsi audit database.
@@ -38,7 +38,7 @@ Projek ini menggunakan 6 tabel terintegrasi dengan mesin penyimpanan InnoDB dan 
 * Lilis (Anggota 2): Menyusun algoritma variabel lokal serta rumus perhitungan Nilai Akhir berbasis persentase bobot tugas, kuis, dan UTS di dalam procedure.
 * Hasriani (Anggota 3) : Menyusun logika percabangan `CASE` untuk konversi nilai ke huruf grade/bobot, serta kondisi `IF` untuk menentukan status kelulusan.
 * Uminati (Anggota 4): Menyusun perintah `UPDATE` ke tabel utama, perintah `INSERT` data riwayat ke tabel log, serta mekanisme penutupan cursor di akhir perulangan.
-* Nuraisya Masdin (Anggota 5): Menyusun skrip pengujian sistem dari kondisi awal hingga akhir, melakukan uji coba eksekusi (CALL), serta menyusun dokumentasi laporan akhir.
+* Nur aisyah Masdin (Anggota 5): Menyusun skrip pengujian sistem dari kondisi awal hingga akhir, melakukan uji coba eksekusi (CALL), serta menyusun dokumentasi laporan akhir.
 
 
 7. Cara Menjalankan Program
