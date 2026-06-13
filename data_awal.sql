@@ -11,8 +11,8 @@ INSERT INTO grade_nilai (grade, bobot, nilai_bawah, nilai_atas) VALUES
 ('E', 0.00, 0.00, 39.99);
 
 INSERT INTO dosen (kode_dosen, nama_dosen, email) VALUES
-('DS001', 'Abdul Malik, S.Kom., M.Cs.', 'abdul.malik@unismuh.ac.id'),
-('DS002', 'Anandari Dewitri, S.Kom., M.T.', 'anandari.d@unismuh.ac.id');
+('DS001', 'Abdul Malik, S.Kom., M.Cs.', 'abdul.malik@umbpalopo.ac.id'),
+('DS002', 'Ir. Justam, S.Kom, M.Kom', 'justam@umbpalopo.ac.id');
 
 INSERT INTO mata_kuliah (kode_mk, nama_mk, sks, semester, kode_dosen) VALUES
 ('MK001', 'Pemrograman Basis Data', 3, 4, 'DS001'),
